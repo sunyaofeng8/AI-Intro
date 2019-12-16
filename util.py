@@ -1,8 +1,7 @@
-# -*- coding: utf-8 -*-
-
 import os
 import itertools
 from PIL import Image
+from io import BytesIO
 import numpy as np
 import pandas as pd
 
@@ -13,24 +12,24 @@ class MagicNumbers:
     sample_dir = 'samples6'  # folder name to save visualized results
     prefix = '201912071134'
 
+    hair_str2label = {
+        '':       [0, 0, 0],
+        'brown':  [0, 0, 1],
+        'blonde': [0, 1, 0],
+        'black':  [1, 0, 0]
+    }
+    gender_str2label = {
+        '':       [0, 0],
+        'male':   [1, 0],
+        'female': [0, 1]
+    }
+    hairs = ['', 'black', 'blonde', 'brown']
+    genders = ['', 'male', 'female']
+    labels_str = list(itertools.product(hairs, genders))
+    nunique_labels = len(labels_str)
 
-# Constants
+
 flags = MagicNumbers()
-hair_str2label = {
-    '':       [0, 0, 0],
-    'brown':  [0, 0, 1],
-    'blonde': [0, 1, 0],
-    'black':  [1, 0, 0]
-}
-gender_str2label = {
-    '':       [0, 0],
-    'male':   [1, 0],
-    'female': [0, 1]
-}
-hairs = ['', 'black', 'blonde', 'brown']
-genders = ['', 'male', 'female']
-labels_str = list(itertools.product(hairs, genders))
-nunique_labels = len(labels_str)
 
 
 def get_dataset(shuffle=True):
@@ -51,7 +50,7 @@ def get_dataset(shuffle=True):
     }
 
     datasets = {}
-    for hair, gender in labels_str:
+    for hair, gender in flags.labels_str:
         if not hair or not gender:
             continue
         dataset = df[(df.hair == hair2index[hair]) & (df.Male == gender2index[gender])]
@@ -96,12 +95,12 @@ def get_label(hair_gender=None, hair='', gender=''):
         hair, gender = hair_gender
 
     try:
-        hair_label = hair_str2label[hair.lower()]
+        hair_label = flags.hair_str2label[hair.lower()]
     except KeyError:
         raise ValueError('Invalid hair type.')
 
     try:
-        gender_label = gender_str2label[gender.lower()]
+        gender_label = flags.gender_str2label[gender.lower()]
     except KeyError:
         raise ValueError('Invalid gender type.')
 
@@ -114,7 +113,7 @@ def read_image(img_path):
     """ Reads an image from the given path. Returns a numpy array of the image. """
     img_size = 128
     # Original size (218, 178, 3), crop to square
-    #image = Image.open(img_path).crop((0, 20, 178, 198)).resize((img_size, img_size))
+    # image = Image.open(img_path).crop((0, 20, 178, 198)).resize((img_size, img_size))
     image = Image.open(img_path)
     image = img_to_float32_centered(image)
     return image
@@ -148,20 +147,22 @@ def get_loaded_model(model_name):
     save_dir = os.path.join(flags.model_dir, flags.prefix, '{}_{}.h5'.format(model_name, flags.test_epoch))
     if model.load_weights(save_dir) is False:
         raise RuntimeError("missing {} model".format(model_name))
-    print('Loaded checkpoint from {}/{}...'.format(flags.model_dir, flags.prefix))
+    print('Loaded checkpoint from {}...'.format(save_dir))
     loaded_models[model_name] = model
     return model
 
 
-stopbyte = b'02'
+_stopbyte = b'02'
 
 
 def encode(data):
+    """ Encode the data before sending through network for correct termination. """
     data = data.replace(b'0', b'01')
-    return data + stopbyte
+    return data + _stopbyte
 
 
 def decode(data):
+    """ Decode the data after receiving through network. """
     data = data.replace(b'01', b'0')
     return data
 
@@ -169,8 +170,33 @@ def decode(data):
 def socket_read(conn):
     data = b''
     while True:
-        new_data = conn.recv(1024)
+        new_data = conn.recv(8192)
         data += new_data
-        if data.endswith(stopbyte):
+        if data.endswith(_stopbyte):
             break
     return decode(data[:-2])
+
+
+def _start_shell(local_ns):
+    """ An interactive shell useful for debugging/development. """
+    import IPython
+    user_ns = {}
+    if local_ns:
+        user_ns.update(local_ns)
+    user_ns.update(globals())
+    IPython.start_ipython(argv=[], user_ns=user_ns)
+
+
+def img_encode(img):
+    """ Encodes an numpy array (representing an image) to a bytes object. Saves network usage. """
+    img = Image.fromarray(img_to_uint8(img))
+    encoded_img = BytesIO()
+    img.save(encoded_img, 'jpeg')
+    return encoded_img.getvalue()
+
+
+def img_decode(img):
+    """ Decodes a bytes object (representing an image) into a numpy array. Saves network usage. """
+    img = BytesIO(img)
+    decoded_img = Image.open(img)
+    return img_to_float32_centered(decoded_img)

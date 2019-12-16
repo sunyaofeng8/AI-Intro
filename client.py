@@ -13,14 +13,15 @@ The dict typically includes 'status' and 'result'.
 from time import time
 import pickle, socket
 from PIL import Image
-from util import read_image, encode, socket_read, img_to_uint8
+import numpy as np
+from util import read_image, encode, socket_read, img_encode, img_decode, img_to_uint8
 
 class ServerInfo:
     host = '127.0.0.1'  # The server's hostname or IP address
     port = 6666  # The port used by the server
 
 
-def do_client(command, arguments, host=ServerInfo.host, port=ServerInfo.port):
+def get_result(command, arguments, host=ServerInfo.host, port=ServerInfo.port):
     """ Performs a remote process call `command(*arguments)` """
     data = pickle.dumps({'command': command, 'args': arguments})
     with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
@@ -41,24 +42,29 @@ def do_client(command, arguments, host=ServerInfo.host, port=ServerInfo.port):
             raise ValueError(result['result'])
 
 
-def img_transform(img, save_path=''):
+def img_transform(img, save_path='', n_sampled_img=6, labels_str=None):
     """
     Transforms the image with every tag possible.
 
     :param img: Numpy NDArray of shape (128, 128, 3). The image to be transformed.
-    :param save_path: A str. Path to save the transformed images, along with some transformed sampled images (since the
-      model uses batch normalization, it is necessary to keep a certain degree of diversity to obtain good performance).
-      If empty, do not save the images.
+    :param save_path: A str. Path to save the transformed images, along with the transformed sampled images.
+      If empty (default), do not save the images.
+    :param n_sampled_img: An int. Number of sampled images of each dataset (since the model uses batch normalization, it
+      is necessary to keep a certain degree of diversity to obtain good performance).
+    :param labels_str: A list of (hair, gender) label strings. If None (default), all possible labels are used.
 
     :return: A dictionary of transformed images, each with shape (128, 128, 3). The key to the dictionary is (hair,
       gender), where hair is '', 'brown', 'blonde' or 'black', and gender is '', 'male' or 'female'. Empty string
       indicates that the feature is unmodified.
     """
-    return do_client('img_transform', (img, save_path))
+    img = img_encode(img)
+    result = get_result('img_transform', (img, save_path, n_sampled_img, labels_str))
+    result = {k: img_decode(v) for k, v in result.items()}
+    return result
 
 
 def img_interpolate(img_content, img_appearance1=('black', 'male'), img_appearance2=('blonde', 'female'),
-                    n_interpolates=4, save_path=''):
+                    n_interpolates=4, save_path='', n_sampled_img=8, labels_str=None):
     """
     Interpolate the img_content based on the appearance encodings of img_appearance1 and img_appearance2.
 
@@ -71,6 +77,9 @@ def img_interpolate(img_content, img_appearance1=('black', 'male'), img_appearan
     :param save_path: A str. Path to save the interpolated images, along with some interpolated sampled images (since
       the model uses batch normalization, it is necessary to keep a certain degree of diversity to obtain good
       performance). If empty, do not save the images.
+    :param n_sampled_img: An int. Number of sampled images of each dataset (since the model uses batch normalization, it
+      is necessary to keep a certain degree of diversity to obtain good performance).
+    :param labels_str: A list of (hair, gender) label strings. If None (default), all possible labels are used.
 
     :return: A dictionary of lists of interpolated images, each with shape (n_interpolates, 128, 128, 3). The
       interpolates are generated from the convex combination of the appearance encodings of img_appearance1 and
@@ -78,12 +87,15 @@ def img_interpolate(img_content, img_appearance1=('black', 'male'), img_appearan
       where hair is '', 'brown', 'blonde' or 'black', and gender is '', 'male' or 'female'. Empty string indicates that
       the feature is unmodified.
     """
-    return do_client('img_interpolate', (img_content, img_appearance1, img_appearance2, n_interpolates, save_path))
-
-
-def kill_server():
-    """ Sends a quit command to the server """
-    do_client('quit', None)
+    img_content = img_encode(img_content)
+    if isinstance(img_appearance1, np.ndarray):
+        img_appearance1 = img_encode(img_appearance1)
+    if isinstance(img_appearance2, np.ndarray):
+        img_appearance2 = img_encode(img_appearance2)
+    result = get_result('img_interpolate', (img_content, img_appearance1, img_appearance2, n_interpolates, save_path,
+                                            n_sampled_img, labels_str))
+    result = {k: img_decode(v) for k, v in result.items()}
+    return result
 
 def DL_GAN(fp):
     image = read_image(fp)
@@ -97,19 +109,14 @@ def DL_GAN(fp):
         img_name = key[0] + '-' + key[1]
         img.save('DLGAN/%s.png' % img_name)
 
+def kill_server():
+    """ Sends a quit command to the server """
+    get_result('quit', None)
+
+
 if __name__ == '__main__':
-    #image = read_image('../celebA/img_align_celeba/177299.jpg')  # use read_image to read an image
-    
-    DL_GAN('face/face0.png')
-    
-    '''
-    def _start_shell(local_ns):
-        # An interactive shell useful for debugging/development.
-        import IPython
-        user_ns = {}
-        if local_ns:
-            user_ns.update(local_ns)
-        user_ns.update(globals())
-        IPython.start_ipython(argv=[], user_ns=user_ns)
-    _start_shell(locals())
-    '''
+    image = read_image('../celebA/img_align_celeba/177299.jpg')  # use read_image to read an image
+    #result = img_transform(image, n_sampled_img=6, save_path='transform_result6.png')
+    #result = img_transform(image, n_sampled_img=6)
+    result = img_interpolate(image)
+    # _start_shell(locals())
