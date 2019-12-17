@@ -54,7 +54,7 @@ def save_result(result, save_path):
     for key, img in result.items():
         img = img_to_uint8(img)
         img = Image.fromarray(img, mode='RGB')
-        img.save(os.path.join(save_path,'{}.png'.format('-'.join(key))))
+        img.save(os.path.join(save_path, '{}.png'.format('-'.join(map(str, key)))))
 
 
 def img_transform(img, save_path='', n_sampled_img=6, labels_str=None):
@@ -88,7 +88,7 @@ def img_interpolate(img_content, img_appearance1=('black', 'male'), img_appearan
     """
     Interpolate the img_content based on the appearance encodings of img_appearance1 and img_appearance2.
 
-    :param img_content: A str, or a Numpy NDArray of shape (128, 128, 3). (Path to) the content image.
+    :param img_content: Numpy NDArray of shape (128, 128, 3). The content image.
     :param img_appearance1: Numpy NDArray of shape (128, 128, 3) or tuple of str. The first appearance image. When
       provided with tuple of str (hair, gender), sample randomly from img_datasets[(hair, gender)].
     :param img_appearance2: Numpy NDArray of shape (128, 128, 3) or tuple of str. The second appearance image. When
@@ -100,11 +100,11 @@ def img_interpolate(img_content, img_appearance1=('black', 'male'), img_appearan
       is necessary to keep a certain degree of diversity to obtain good performance).
     :param labels_str: A list of (hair, gender) label strings. If None (default), all possible labels are used.
 
-    :return: A dictionary of lists of interpolated images, each with shape (n_interpolates, 128, 128, 3). The
-      interpolates are generated from the convex combination of the appearance encodings of img_appearance1 and
-      img_appearance2, guided with the content encoding of img_content. The key to the dictionary is (hair, gender),
-      where hair is '', 'brown', 'blonde' or 'black', and gender is '', 'male' or 'female'. Empty string indicates that
-      the feature is unmodified.
+    :return: A dictionary of lists of interpolated images, each with shape (128, 128, 3). The interpolates are generated
+      from the convex combination of the appearance encodings of img_appearance1 and img_appearance2, guided with the
+      content encoding of img_content. The key to the dictionary is (hair, gender, alpha), where hair is '', 'brown',
+      'blonde' or 'black', gender is '', 'male' or 'female' (empty string indicates that the feature is unmodified.),
+      and alpha is the interpolation coefficient.
     """
     # read and encode the images
     if isinstance(img_content, str):
