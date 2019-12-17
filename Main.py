@@ -6,7 +6,7 @@ import cv2
 from client import DL_GAN
 from find_faces import Find_faces_and_mark_them
 from get_attributes import Attribute
-from graphic_interface import PhotoViewer
+from graphic_interface import PhotoViewer_init, PhotoViewer_1, PhotoViewer_2, PhotoViewer_3, PhotoViewer_4
 
 
 def get_fps_attrs(fp, number_of_faces):
@@ -43,34 +43,57 @@ def get_DLGAN():
     return DLGAN_fps, DLGAN_zw, DLGAN_attrs
 
 
-def show_face(fp):  # show faces
+
+def show_face(fp): # show faces
     print("======== Display ========")
 
     number_of_faces = Find_faces_and_mark_them(fp)
     print("the number of faces = %d" % number_of_faces)
 
-    if number_of_faces == 0:  # No faces exists
+    if number_of_faces == 0: # No faces existed
         return 0
 
     fps, attrs = get_fps_attrs(fp, number_of_faces)
-    DLGAN_fps, DLGAN_zw, DLGAN_attrs = get_DLGAN()
 
-    app = PhotoViewer(fps, attrs, DLGAN_fps, DLGAN_zw, DLGAN_attrs)
-    app.MainLoop()
+
+    while True:
+        from graphic_interface import flag
+        if flag == -1:
+            app = PhotoViewer_init(fps, attrs, None, None, None)
+            app.MainLoop()
+        elif flag == 1:
+            DLGAN_fps, DLGAN_zw, DLGAN_attrs = get_DLGAN()
+            app = PhotoViewer_1(fps, attrs, DLGAN_fps, DLGAN_zw, DLGAN_attrs)
+            app.MainLoop()
+        elif flag == 2:
+            DLGAN_fps, DLGAN_zw, DLGAN_attrs = get_DLGAN()
+            app = PhotoViewer_2(fps, attrs, DLGAN_fps, DLGAN_zw, DLGAN_attrs)
+            app.MainLoop()
+        elif flag == 3:
+            DLGAN_fps, DLGAN_zw, DLGAN_attrs = get_DLGAN()
+            app = PhotoViewer_3(fps, attrs, DLGAN_fps, DLGAN_zw, DLGAN_attrs)
+            app.MainLoop()
+        elif flag == 4:
+            DLGAN_fps, DLGAN_zw, DLGAN_attrs = get_DLGAN()
+            app = PhotoViewer_4(fps, attrs, DLGAN_fps, DLGAN_zw, DLGAN_attrs)
+            app.MainLoop()
+        elif flag == 0:
+            break
+        else:
+            print('error: invalid value of flag')
     return 1
     
 
 def capture_camera():
     print('====== Photo Time =======')
-    import camera
-    camera.capture_camera()
+    os.system('python camera.py') # call camera
     show_face(r'camera/raw.png')
 
 
 if __name__ == '__main__':
     '''
     You can choose whether use camera or not.
-    If you don't want to use camera, please specify the file path of the raw image.
+    If you don't want to camera, please specify the file path of the raw image.
     '''
 
     show_face(r"raw/raw10.jpeg")
