@@ -43,13 +43,13 @@ def get_DLGAN():
     return DLGAN_fps, DLGAN_zw, DLGAN_attrs
 
 
-def show_face(fp): # show faces
+def show_face(fp):  # show faces
     print("======== Display ========")
 
     number_of_faces = Find_faces_and_mark_them(fp)
     print("the number of faces = %d" % number_of_faces)
 
-    if number_of_faces == 0: # No faces existed
+    if number_of_faces == 0:  # No faces exists
         return 0
 
     fps, attrs = get_fps_attrs(fp, number_of_faces)
@@ -62,15 +62,16 @@ def show_face(fp): # show faces
 
 def capture_camera():
     print('====== Photo Time =======')
-    os.system('python camera.py') # call camera
+    import camera
+    camera.capture_camera()
     show_face(r'camera/raw.png')
 
 
 if __name__ == '__main__':
     '''
     You can choose whether use camera or not.
-    If you don't want to camera, please specify the file path of the raw image.
+    If you don't want to use camera, please specify the file path of the raw image.
     '''
 
     show_face(r"raw/raw10.jpeg")
-    #capture_camera()
+    # capture_camera()

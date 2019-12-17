@@ -97,6 +97,7 @@ def img_interpolate(img_content, img_appearance1=('black', 'male'), img_appearan
     result = {k: img_decode(v) for k, v in result.items()}
     return result
 
+
 def DL_GAN(fp):
     image = read_image(fp)
     result = img_transform(image)
@@ -104,10 +105,11 @@ def DL_GAN(fp):
     for key in result:
         img = result[key]
         img = img_to_uint8(img)
-        img = Image.fromarray(img.astype('uint8')).convert('RGB')
+        img = Image.fromarray(img).convert('RGB')
 
         img_name = key[0] + '-' + key[1]
         img.save('DLGAN/%s.png' % img_name)
+
 
 def kill_server():
     """ Sends a quit command to the server """

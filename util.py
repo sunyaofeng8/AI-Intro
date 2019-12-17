@@ -85,7 +85,7 @@ def img_to_uint8(images):
     elif images.dtype == np.float32 and np.max(images) <= 1 and np.min(images) >= 0:
         images = (images * 255).astype(np.uint8)
 
-    return images
+    return images.astype(np.uint8)
 
 
 def get_label(hair_gender=None, hair='', gender=''):
@@ -115,6 +115,10 @@ def read_image(img_path):
     # Original size (218, 178, 3), crop to square
     # image = Image.open(img_path).crop((0, 20, 178, 198)).resize((img_size, img_size))
     image = Image.open(img_path)
+    if image.size == (178, 218):
+        image = image.crop((0, 20, 178, 198)).resize((img_size, img_size))
+    elif image.size != (128, 128):
+        print('Warning: Image size is {}, different from the DLGAN input size (128, 128).'.format(image.size))
     image = img_to_float32_centered(image)
     return image
 
@@ -200,3 +204,6 @@ def img_decode(img):
     img = BytesIO(img)
     decoded_img = Image.open(img)
     return img_to_float32_centered(decoded_img)
+
+if __name__ == '__main__':
+    read_image('../celebA/img_align_celeba/177299.jpg')

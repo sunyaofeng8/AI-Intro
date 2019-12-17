@@ -2,6 +2,7 @@
 
 import cv2
 
+
 def change_into_640_480(img): # change size of the raw image into 640 * 480
     por = min(img.shape[1] / img.shape[0], 640 / 480)
     len = int(por * img.shape[0]) // 2
@@ -10,6 +11,7 @@ def change_into_640_480(img): # change size of the raw image into 640 * 480
 
     img = cv2.resize(img, (640, 480))
     return img
+
 
 def capture_camera():
     capture = cv2.VideoCapture(0) # Capture Video
@@ -33,6 +35,7 @@ def capture_camera():
 
     capture.release()
     cv2.destroyAllWindows()
+
 
 if __name__ == '__main__':
     capture_camera()
