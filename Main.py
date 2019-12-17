@@ -43,8 +43,7 @@ def get_DLGAN():
     return DLGAN_fps, DLGAN_zw, DLGAN_attrs
 
 
-
-def show_face(fp): # show faces
+def show_face(fp):  # show faces
     print("======== Display ========")
 
     number_of_faces = Find_faces_and_mark_them(fp)
@@ -86,7 +85,7 @@ def show_face(fp): # show faces
 
 def capture_camera():
     print('====== Photo Time =======')
-    os.system('python camera.py') # call camera
+    os.system('python camera.py')  # call camera
     show_face(r'camera/raw.png')
 
 
