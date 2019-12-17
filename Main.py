@@ -3,7 +3,7 @@
 import os
 import cv2
 
-from client import DL_GAN
+from client import img_transform, img_interpolate
 from find_faces import Find_faces_and_mark_them
 from get_attributes import Attribute
 from graphic_interface import PhotoViewer
@@ -31,7 +31,7 @@ def get_fps_attrs(fp, number_of_faces):
 
 
 def get_DLGAN():
-    DL_GAN('face/face0.png') # The biggest face
+    img_transform('face/face0.png')  # transform the biggest face using DLGAN
 
     hair = [('black', '黑发'), ('brown', '棕发'), ('blonde', '金发')]
     sex = [('male', '男'), ('female', '女')]

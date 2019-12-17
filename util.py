@@ -112,8 +112,8 @@ def get_label(hair_gender=None, hair='', gender=''):
 def read_image(img_path):
     """ Reads an image from the given path. Returns a numpy array of the image. """
     img_size = 128
-    # Original size (218, 178, 3), crop to square
-    # image = Image.open(img_path).crop((0, 20, 178, 198)).resize((img_size, img_size))
+    if not os.path.exists(img_path):
+        raise ValueError('Invalid image path: {}'.format(img_path))
     image = Image.open(img_path)
     if image.size == (178, 218):
         image = image.crop((0, 20, 178, 198)).resize((img_size, img_size))
