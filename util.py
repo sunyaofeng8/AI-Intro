@@ -28,6 +28,8 @@ class MagicNumbers:
     labels_str = list(itertools.product(hairs, genders))
     nunique_labels = len(labels_str)
 
+    appearance_encoding_dim = 16
+
 
 flags = MagicNumbers()
 
