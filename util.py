@@ -69,9 +69,9 @@ def img_to_float32_centered(images):
     if images.dtype == np.uint8 and np.min(images) >= 0 and np.max(images) <= 255:
         images = images.astype(np.float32)
         return images / 127.5 - 1
-    elif images.dtype == np.float32 and np.min(images) >= 0.0 and np.max(images) <= 1.0:
+    elif images.dtype == np.float32 and np.min(images) >= -1e-3 and np.max(images) <= 1.+1e-3:
         return images * 2 - 1
-    elif images.dtype == np.float32 and np.min(images) >= -1.0 and np.max(images) <= 1.0:
+    elif images.dtype == np.float32 and np.min(images) >= -1.-1e-3 and np.max(images) <= 1.+1e-3:
         return images
     else:
         raise ValueError('Argument images must either have dtype uint8 with range 0 - 255, or have dtype float32 with '
@@ -82,9 +82,9 @@ def img_to_uint8(images):
     """ Convert images to uint8 ranging from 0 to 255. """
     if not isinstance(images, np.ndarray):
         images = np.array(images, dtype=np.float32)
-    if images.dtype == np.float32 and np.max(images) <= 1 and -1 <= np.min(images):
+    if images.dtype == np.float32 and np.max(images) <= 1.+1e-3 and -1.-1e-3 <= np.min(images):
         images = ((images + 1) * 127.5).astype(np.uint8)
-    elif images.dtype == np.float32 and np.max(images) <= 1 and np.min(images) >= 0:
+    elif images.dtype == np.float32 and np.max(images) <= 1.+1e-3 and np.min(images) >= -1e-3:
         images = (images * 255).astype(np.uint8)
 
     return images.astype(np.uint8)
