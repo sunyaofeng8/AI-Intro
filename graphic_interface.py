@@ -20,7 +20,7 @@ class PhotoViewer_init(wx.App):
         self.DLGAN_attrs = DLGAN_attrs
 
         # Display Title
-        self.frame = wx.Frame(None, title='史上最强Project', size = (1280, 720), pos = (0, 50))
+        self.frame = wx.Frame(None, title='史上最强Project', size = (1280, 500), pos = (0, 50))
         self.panel = wx.Panel(self.frame)
         
         # Define font
@@ -36,22 +36,21 @@ class PhotoViewer_init(wx.App):
 
         self.partI()    # display Part I (marked picture)
         self.partII()   # display Part II (top 4 biggest faces)
-        # self.partIII()  # display Part III (DLGAN)
 
         # the bottons of four application
-        self.btn1 = wx.Button(self.panel, label="App1", pos=(100, 500))
+        self.btn1 = wx.Button(self.panel, label="修改性别和头发颜色", pos=(100, 400))
         self.Bind(wx.EVT_BUTTON, self.Event_Close1, self.btn1)
 
-        self.btn2 = wx.Button(self.panel, label="App2", pos=(400, 500))
+        self.btn2 = wx.Button(self.panel, label="App2", pos=(400, 400))
         self.Bind(wx.EVT_BUTTON, self.Event_Close2, self.btn2)
 
-        self.btn3 = wx.Button(self.panel, label="App3", pos=(700, 500))
+        self.btn3 = wx.Button(self.panel, label="App3", pos=(700, 400))
         self.Bind(wx.EVT_BUTTON, self.Event_Close3, self.btn3)
 
-        self.btn4 = wx.Button(self.panel, label="App4", pos=(1000, 500))
+        self.btn4 = wx.Button(self.panel, label="App4", pos=(1000, 400))
         self.Bind(wx.EVT_BUTTON, self.Event_Close4, self.btn4)
 
-        self.btn0 = wx.Button(self.panel, label="Close", pos=(550, 600))
+        self.btn0 = wx.Button(self.panel, label="Close", pos=(550, 450))
         self.Bind(wx.EVT_BUTTON, self.Event_Close0, self.btn0)
 
         # show

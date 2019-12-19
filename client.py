@@ -207,8 +207,14 @@ def kill_server():
     """ Sends a quit command to the server """
     get_result('quit', None)
 
+def Get_all(fp):
+    image = read_image(fp)
+    img_get_all(image, save_path='DLGAN')
 
 if __name__ == '__main__':
+    Get_all('face/face0.png')
+
+    '''
     image = read_image('../celebA/img_align_celeba/177299.jpg')  # use read_image to read an image
     #result = img_transform(image)
     #result = img_transform(image)  # test 1
@@ -216,3 +222,4 @@ if __name__ == '__main__':
     #result = img_transform(image, gaussian_appearance=True)  # test 3
     result = img_get_all(image, save_path='DLGAN')  # test 4
     # _start_shell(locals())
+    '''
