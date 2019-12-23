@@ -65,7 +65,7 @@ def save_result(result, save_path, key_is_filename=False):
 
 def img_get_all(img_content, img_appearance1=('black', 'male'), img_appearance2=('blonde', 'female'),
                 labels_str=(('', ''), ('black', 'male'), ('blonde', 'female')),
-                n_gaussian_appearance=3, n_interpolates=4, save_path='', server_save_path='', n_sampled_content=8):
+                n_gaussian_appearance=3, n_interpolates=4, save_path='', server_save_path='', n_sampled_content=5):
     """
     Return results of all applications of DLGAN.
 
@@ -77,7 +77,7 @@ def img_get_all(img_content, img_appearance1=('black', 'male'), img_appearance2=
     Application 4: Transform the img_content with appearance interpolation between img_appearance1 and img_appearance2
        and labels in labels_str. Returns n_interpolates * len(labels_str) images.
 
-    :param img_content: Numpy NDArray of shape (128, 128, 3). The image to be transformed.
+    :param img_content: Numpy NDArray of shape (128, 128, 3) or str. The image to be transformed.
     :param img_appearance1: Numpy NDArray of shape (128, 128, 3) or tuple of str. The first appearance image. When
       provided with tuple of str (hair, gender), sample randomly from img_datasets[(hair, gender)].
     :param img_appearance2: Numpy NDArray of shape (128, 128, 3) or tuple of str. The second appearance image. When
@@ -121,7 +121,7 @@ def img_get_all(img_content, img_appearance1=('black', 'male'), img_appearance2=
 
 
 def img_transform(img_content, img_appearance=None, labels_str=None, gaussian_appearance=False,
-                  save_path='', server_save_path='', n_sampled_img=6):
+                  save_path='', server_save_path='', n_sampled_img=5):
     """
     Transforms the img_content with labels specified in labels_str and (optional) appearance image.
 
@@ -158,7 +158,7 @@ def img_transform(img_content, img_appearance=None, labels_str=None, gaussian_ap
 
 
 def img_interpolate(img_content, img_appearance1=('black', 'male'), img_appearance2=('blonde', 'female'),
-                    n_interpolates=4, labels_str=(('', ''),), save_path='', server_save_path='', n_sampled_img=8):
+                    n_interpolates=4, labels_str=(('', ''),), save_path='', server_save_path='', n_sampled_img=5):
     """
     Interpolate the img_content based on the appearance encodings of img_appearance1 and img_appearance2.
 
@@ -207,15 +207,12 @@ def kill_server():
     """ Sends a quit command to the server """
     get_result('quit', None)
 
-def Get_all(fp):
-    image = read_image(fp)
-    img_get_all(image, save_path='DLGAN')
 
 if __name__ == '__main__':
-    Get_all('face/face0.png')
+    # img_get_all('face/face0.png')
 
+    image = img_get_all('../celebA/img_align_celeba/177299.jpg')  # use read_image to read an image
     '''
-    image = read_image('../celebA/img_align_celeba/177299.jpg')  # use read_image to read an image
     #result = img_transform(image)
     #result = img_transform(image)  # test 1
     #result = img_transform(image, image)  # test 2

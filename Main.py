@@ -3,7 +3,7 @@
 import os
 import cv2
 
-from client import Get_all
+from client import img_get_all
 from find_faces import Find_faces_and_mark_them
 from get_attributes import Attribute
 from graphic_interface import PhotoViewer_init, PhotoViewer_1, PhotoViewer_2, PhotoViewer_3, PhotoViewer_4
@@ -40,6 +40,7 @@ def get_DLGAN1():
 
     return DLGAN_fps, DLGAN_zw, DLGAN_attrs
 
+
 def get_DLGAN2():
     fps = ['DLGAN/sampled_img_appearance2.png']
     zw = ['Reference Image 1']
@@ -58,6 +59,7 @@ def get_DLGAN2():
     attrs = [Attribute(fp) for fp in fps]
 
     return fps, zw, attrs
+
 
 def get_DLGAN3():
     return [], [], []
