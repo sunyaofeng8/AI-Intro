@@ -41,13 +41,13 @@ class PhotoViewer_init(wx.App):
         self.btn1 = wx.Button(self.panel, label="修改性别和头发颜色", pos=(100, 400))
         self.Bind(wx.EVT_BUTTON, self.Event_Close1, self.btn1)
 
-        self.btn2 = wx.Button(self.panel, label="App2", pos=(400, 400))
+        self.btn2 = wx.Button(self.panel, label="自动提取图片特征", pos=(400, 400))
         self.Bind(wx.EVT_BUTTON, self.Event_Close2, self.btn2)
 
-        self.btn3 = wx.Button(self.panel, label="App3", pos=(700, 400))
+        self.btn3 = wx.Button(self.panel, label="引入高斯噪声", pos=(700, 400))
         self.Bind(wx.EVT_BUTTON, self.Event_Close3, self.btn3)
 
-        self.btn4 = wx.Button(self.panel, label="App4", pos=(1000, 400))
+        self.btn4 = wx.Button(self.panel, label="图片插值", pos=(1000, 400))
         self.Bind(wx.EVT_BUTTON, self.Event_Close4, self.btn4)
 
         self.btn0 = wx.Button(self.panel, label="Close", pos=(550, 450))
@@ -58,14 +58,14 @@ class PhotoViewer_init(wx.App):
         self.frame.Show()
 
     def partI(self): # Show Marked Image
-        title = wx.StaticText(self.panel, label = "一、人脸检测", pos = (150, 10))
+        title = wx.StaticText(self.panel, label = "人脸检测", pos = (150, 10))
         title.SetFont(self.title_font)
 
         marked = wx.Image("face/marked.png", wx.BITMAP_TYPE_ANY) # 430 * 320
         wx.StaticBitmap(self.panel, wx.ID_ANY, wx.Bitmap(marked), pos = (20, 50))
 
     def partII(self): # Show faces
-        title = wx.StaticText(self.panel, label = "二、属性分析（仅分析上镜率最高的四个人）", pos = (650, 10))
+        title = wx.StaticText(self.panel, label = "属性分析（仅分析上镜率最高的四个人）", pos = (650, 10))
         title.SetFont(self.title_font)
 
         for i, (fp, attr) in enumerate(zip(self.fps, self.attrs)):
@@ -155,9 +155,10 @@ class PhotoViewer_1(wx.App):
         wx.StaticBitmap(self.panel, wx.ID_ANY, wx.Bitmap(marked), pos=(20, 50))
 
     def partII(self):  # Show faces
-        title = wx.StaticText(self.panel, label="属性分析（仅分析上镜率最高的四个人）", pos=(400, 10))
+        #title = wx.StaticText(self.panel, label="属性分析（仅分析上镜率最高的四个人）", pos=(400, 10))
+        #title.SetFont(self.title_font)
+        title = wx.StaticText(self.panel, label="应用一：修改性别和头发颜色", pos=(500, 10))
         title.SetFont(self.title_font)
-
         for i, (fp, attr) in enumerate(zip(self.fps, self.attrs)):
             # The coordinates
             face_coor = (400 if i < 2 else 790, 60 if i == 0 or i == 2 else 220)
@@ -170,14 +171,13 @@ class PhotoViewer_1(wx.App):
             text.SetFont(self.body_font)
 
     def partIII(self):  # Show DLGAN Results
-        title = wx.StaticText(self.panel, label="应用一：DLGAN 换脸结果（上镜率最高的人才能被换脸哦）", pos=(390, 400))
-        title.SetFont(self.title_font)
+
 
         for i, (fp, zw, attr) in enumerate(zip(self.DLGAN_fps, self.DLGAN_zw, self.DLGAN_attrs)):
             # the coordinates
-            zw_coor = (70 + i * 160, 440)
-            face_coor = (70 + i * 160, 460)
-            text_coor = (face_coor[0] + 10, face_coor[1] + 140)
+            zw_coor = (70 + i * 160, 300)
+            face_coor = (70 + i * 160, 320)
+            text_coor = (face_coor[0] + 10, face_coor[1]+ 140)
 
             zx = wx.StaticText(self.panel, label=zw, pos=zw_coor)
             zx.SetFont(self.body_font)
@@ -221,8 +221,8 @@ class PhotoViewer_2(wx.App):
 
         # Draw segmentation Line
 
-        segment2 = wx.StaticLine(self.panel, pos=(10, 230), size=(1220, 8), style=wx.LI_HORIZONTAL)
-        segment2.SetBackgroundColour(wx.BLACK)
+        #segment2 = wx.StaticLine(self.panel, pos=(10, 230), size=(1220, 8), style=wx.LI_HORIZONTAL)
+        #segment2.SetBackgroundColour(wx.BLACK)
 
         # self.partI()  # display Part I (marked picture)
         self.partII()  # display Part II (top 4 biggest faces)
@@ -245,12 +245,16 @@ class PhotoViewer_2(wx.App):
         wx.StaticBitmap(self.panel, wx.ID_ANY, wx.Bitmap(marked), pos=(20, 50))
 
     def partII(self):  # Show faces
-        title = wx.StaticText(self.panel, label="属性分析（仅分析上镜率最高的四个人）", pos=(400, 10))
+#        title = wx.StaticText(self.panel, label="属性分析（仅分析上镜率最高的四个人）", pos=(400, 10))
+#        title.SetFont(self.title_font)
+        title = wx.StaticText(self.panel, label="应用二：自动提取图片特征", pos=(500, 10))
         title.SetFont(self.title_font)
 
         for i, (fp, attr) in enumerate(zip(self.fps, self.attrs)):
+            if i != 0:
+                break
             # The coordinates
-            face_coor = (400 if i < 2 else 790, 60 if i == 0 or i == 2 else 220)
+            face_coor = (800 if i < 2 else 790, 60 if i == 0 or i == 2 else 220)
             text_coor = (face_coor[0] + 140, face_coor[1] - 5)
 
             face = wx.Image(fp, wx.BITMAP_TYPE_ANY)
@@ -260,14 +264,17 @@ class PhotoViewer_2(wx.App):
             text.SetFont(self.body_font)
 
     def partIII(self):  # Show DLGAN Results
-        title = wx.StaticText(self.panel, label="应用二", pos=(390, 400))
-        title.SetFont(self.title_font)
-
         for i, (fp, zw, attr) in enumerate(zip(self.DLGAN_fps, self.DLGAN_zw, self.DLGAN_attrs)):
             # the coordinates
-            zw_coor = (70 + i * 160, 440)
-            face_coor = (70 + i * 160, 460)
-            text_coor = (face_coor[0] + 10, face_coor[1] + 140)
+            if i < 4:
+                zw_coor = (100 + i * 160, 100)
+                face_coor = (100 + i * 160, 120)
+                text_coor = (face_coor[0] + 10, face_coor[1] + 140)
+            else:
+                j = i - 4
+                zw_coor = (100 + j * 160, 380)
+                face_coor = (100 + j * 160, 400)
+                text_coor = (face_coor[0] + 10, face_coor[1] + 140)
 
             zx = wx.StaticText(self.panel, label=zw, pos=zw_coor)
             zx.SetFont(self.body_font)
@@ -311,8 +318,8 @@ class PhotoViewer_3(wx.App):
 
         # Draw segmentation Line
 
-        segment2 = wx.StaticLine(self.panel, pos=(10, 230), size=(1220, 8), style=wx.LI_HORIZONTAL)
-        segment2.SetBackgroundColour(wx.BLACK)
+        #segment2 = wx.StaticLine(self.panel, pos=(10, 230), size=(1220, 8), style=wx.LI_HORIZONTAL)
+        #segment2.SetBackgroundColour(wx.BLACK)
 
         # self.partI()  # display Part I (marked picture)
         self.partII()  # display Part II (top 4 biggest faces)
@@ -335,12 +342,12 @@ class PhotoViewer_3(wx.App):
         wx.StaticBitmap(self.panel, wx.ID_ANY, wx.Bitmap(marked), pos=(20, 50))
 
     def partII(self):  # Show faces
-        title = wx.StaticText(self.panel, label="属性分析（仅分析上镜率最高的四个人）", pos=(400, 10))
-        title.SetFont(self.title_font)
+        #title = wx.StaticText(self.panel, label="属性分析（仅分析上镜率最高的四个人）", pos=(400, 10))
+        #title.SetFont(self.title_font)
 
         for i, (fp, attr) in enumerate(zip(self.fps, self.attrs)):
             # The coordinates
-            face_coor = (400 if i < 2 else 790, 60 if i == 0 or i == 2 else 220)
+            face_coor = (700 if i < 2 else 790, 60 if i == 0 or i == 2 else 220)
             text_coor = (face_coor[0] + 140, face_coor[1] - 5)
 
             face = wx.Image(fp, wx.BITMAP_TYPE_ANY)
@@ -350,14 +357,25 @@ class PhotoViewer_3(wx.App):
             text.SetFont(self.body_font)
 
     def partIII(self):  # Show DLGAN Results
-        title = wx.StaticText(self.panel, label="应用三", pos=(390, 400))
+        title = wx.StaticText(self.panel, label="应用三:引入高斯噪声", pos=(600, 10))
         title.SetFont(self.title_font)
 
         for i, (fp, zw, attr) in enumerate(zip(self.DLGAN_fps, self.DLGAN_zw, self.DLGAN_attrs)):
             # the coordinates
-            zw_coor = (70 + i * 160, 440)
-            face_coor = (70 + i * 160, 460)
-            text_coor = (face_coor[0] + 10, face_coor[1] + 140)
+            if i < 3:
+                zw_coor = (70 + i * 160, 10)
+                face_coor = (70 + i * 160, 30)
+                text_coor = (face_coor[0] + 10, face_coor[1] + 140)
+            elif i < 6:
+                j = i - 3
+                zw_coor = (70 + j * 160, 240)
+                face_coor = (70 + j * 160, 260)
+                text_coor = (face_coor[0] + 10, face_coor[1] + 140)
+            else:
+                j = i - 6
+                zw_coor = (70 + j * 160, 470)
+                face_coor = (70 + j * 160, 490)
+                text_coor = (face_coor[0] + 10, face_coor[1] + 140)
 
             zx = wx.StaticText(self.panel, label=zw, pos=zw_coor)
             zx.SetFont(self.body_font)
@@ -401,11 +419,11 @@ class PhotoViewer_4(wx.App):
 
         # Draw segmentation Line
 
-        segment2 = wx.StaticLine(self.panel, pos=(10, 230), size=(1220, 8), style=wx.LI_HORIZONTAL)
-        segment2.SetBackgroundColour(wx.BLACK)
+#        segment2 = wx.StaticLine(self.panel, pos=(10, 230), size=(1220, 8), style=wx.LI_HORIZONTAL)
+#        segment2.SetBackgroundColour(wx.BLACK)
 
         # self.partI()  # display Part I (marked picture)
-        self.partII()  # display Part II (top 4 biggest faces)
+        # self.partII()  # display Part II (top 4 biggest faces)
         self.partIII()  # display Part III (DLGAN)
 
         # the back botton
@@ -425,12 +443,17 @@ class PhotoViewer_4(wx.App):
         wx.StaticBitmap(self.panel, wx.ID_ANY, wx.Bitmap(marked), pos=(20, 50))
 
     def partII(self):  # Show faces
-        title = wx.StaticText(self.panel, label="属性分析（仅分析上镜率最高的四个人）", pos=(400, 10))
+#        title = wx.StaticText(self.panel, label="属性分析（仅分析上镜率最高的四个人）", pos=(400, 10))
+#        title.SetFont(self.title_font)
+        title = wx.StaticText(self.panel, label="应用四：图片插值", pos=(500, 10))
         title.SetFont(self.title_font)
 
         for i, (fp, attr) in enumerate(zip(self.fps, self.attrs)):
             # The coordinates
-            face_coor = (400 if i < 2 else 790, 60 if i == 0 or i == 2 else 220)
+            if i != 0:
+                break
+                # The coordinates
+            face_coor = (800 if i < 2 else 790, 60 if i == 0 or i == 2 else 220)
             text_coor = (face_coor[0] + 140, face_coor[1] - 5)
 
             face = wx.Image(fp, wx.BITMAP_TYPE_ANY)
@@ -440,15 +463,30 @@ class PhotoViewer_4(wx.App):
             text.SetFont(self.body_font)
 
     def partIII(self):  # Show DLGAN Results
-        title = wx.StaticText(self.panel, label="应用四", pos=(390, 400))
+        title = wx.StaticText(self.panel, label="应用四：图片插值", pos=(500, 10))
         title.SetFont(self.title_font)
-
         for i, (fp, zw, attr) in enumerate(zip(self.DLGAN_fps, self.DLGAN_zw, self.DLGAN_attrs)):
             # the coordinates
-            zw_coor = (70 + i * 160, 440)
-            face_coor = (70 + i * 160, 460)
-            text_coor = (face_coor[0] + 10, face_coor[1] + 140)
-
+            if i == 0:
+                zw_coor = (10, 100)
+                face_coor = (10, 120)
+                text_coor = (face_coor[0] + 10, face_coor[1] + 140)
+            elif i == 1:
+                zw_coor = (1100, 100)
+                face_coor = (1100, 120)
+                text_coor = (face_coor[0] + 10, face_coor[1] + 140)
+            elif i < 6:
+                j = i - 2
+                zw_coor = (220 + j * 230, 70)
+                face_coor = (220 + j * 230, 90)
+                text_coor = (face_coor[0] + 10, face_coor[1] + 140)
+            elif i < 10:
+                j = i - 6
+                zw_coor = (220 + j * 230, 320)
+                face_coor = (220 + j * 230, 340)
+                text_coor = (face_coor[0] + 10, face_coor[1] + 140)
+            else:
+                break
             zx = wx.StaticText(self.panel, label=zw, pos=zw_coor)
             zx.SetFont(self.body_font)
 
