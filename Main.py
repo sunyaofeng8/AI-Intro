@@ -94,7 +94,7 @@ def show_face(fp):  # show faces
 
     fps, attrs = get_fps_attrs(fp, number_of_faces)
     # Get_all('face/face0.png')
-    img_get_all('face/face0.png')
+    img_get_all('face/face0.png', save_path='./DLGAN')
 
     while True:
         from graphic_interface import flag
