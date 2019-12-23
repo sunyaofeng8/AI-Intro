@@ -3,7 +3,7 @@
 import os
 import cv2
 
-from client import img_get_all
+from client import Get_all, img_get_all
 from find_faces import Find_faces_and_mark_them
 from get_attributes import Attribute
 from graphic_interface import PhotoViewer_init, PhotoViewer_1, PhotoViewer_2, PhotoViewer_3, PhotoViewer_4
@@ -40,7 +40,6 @@ def get_DLGAN1():
 
     return DLGAN_fps, DLGAN_zw, DLGAN_attrs
 
-
 def get_DLGAN2():
     fps = ['DLGAN/sampled_img_appearance2.png']
     zw = ['Reference Image 1']
@@ -60,10 +59,15 @@ def get_DLGAN2():
 
     return fps, zw, attrs
 
-
 def get_DLGAN3():
-    return [], [], []
+    labs = [('-', '默认'), ('black-male', '黑发男子'), ('blonde-female', '金发女子')]
+    ID = [['0', '3', '6'], ['1', '4', '7'], ['2', '5', '8']]
 
+    fps = ['DLGAN/3-%s-%s.png' % (l[0], j)  for (i, l) in enumerate(labs) for j in ID[i]]
+    zw = [l[1] for (i, l) in enumerate(labs) for j in ID[i]]
+    attrs = [Attribute(fp) for fp in fps]
+
+    return fps, zw, attrs
 
 def get_DLGAN4():
     labs = [('-', '默认'), ('blonde-female', '金发女子'), ('black-male', '黑发男子')]
@@ -89,7 +93,8 @@ def show_face(fp):  # show faces
         return 0
 
     fps, attrs = get_fps_attrs(fp, number_of_faces)
-    #Get_all('face/face0.png')
+    # Get_all('face/face0.png')
+    img_get_all('face/face0.png')
 
     while True:
         from graphic_interface import flag
@@ -131,5 +136,5 @@ if __name__ == '__main__':
     If you don't want to camera, please specify the file path of the raw image.
     '''
 
-    show_face(r"camera/raw.png")
-    #capture_camera()
+    #show_face(r"camera/raw.png")
+    capture_camera()
