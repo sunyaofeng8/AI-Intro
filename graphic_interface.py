@@ -160,6 +160,8 @@ class PhotoViewer_1(wx.App):
         title = wx.StaticText(self.panel, label="应用一：修改性别和头发颜色", pos=(500, 10))
         title.SetFont(self.title_font)
         for i, (fp, attr) in enumerate(zip(self.fps, self.attrs)):
+            if i == 1:
+                break
             # The coordinates
             face_coor = (400 if i < 2 else 790, 60 if i == 0 or i == 2 else 220)
             text_coor = (face_coor[0] + 140, face_coor[1] - 5)
@@ -346,6 +348,9 @@ class PhotoViewer_3(wx.App):
         #title.SetFont(self.title_font)
 
         for i, (fp, attr) in enumerate(zip(self.fps, self.attrs)):
+            if i == 1:
+                break
+            
             # The coordinates
             face_coor = (700 if i < 2 else 790, 60 if i == 0 or i == 2 else 220)
             text_coor = (face_coor[0] + 140, face_coor[1] - 5)
