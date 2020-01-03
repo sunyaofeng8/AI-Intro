@@ -2,11 +2,6 @@
 
 Given a raw image, this program can find all the faces of the given raw image, and select one of them, then display the results of DLGAN.
 
-## To-Do List
-
-- [ ] 看懂代码 XD
-- [ ] 减少服务器延时，现在运行每个application需要4-5s
-- [ ] 在窗口端实现DLGAN的Application 2、3、4
 
 ## Folders
 
